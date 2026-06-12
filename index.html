@@ -1,0 +1,977 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Certified Architect — Study Group Playbook</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=JetBrains+Mono:wght@400;600;700&display=swap');
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg:#0F0F14; --bg2:#13131a; --bg3:#1a1a2e; --border:#2a2a3e;
+    --text:#E8E4DC; --muted:#9090A8; --dim:#6060A0;
+    --blue:#4A9EFF; --purple:#8B5CF6; --amber:#F59E0B;
+    --green:#10B981; --red:#EF4444; --cyan:#06B6D4; --pink:#EC4899;
+    --serif:'EB Garamond',Georgia,serif; --mono:'JetBrains Mono','Courier New',monospace;
+  }
+  body { font-family:var(--serif); background:var(--bg); color:var(--text); min-height:100vh; }
+  .header { background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%); padding:48px 32px 32px; border-bottom:1px solid var(--border); }
+  .header-inner { max-width:960px; margin:0 auto; }
+  .badge { display:inline-block; background:rgba(74,158,255,.15); border:1px solid rgba(74,158,255,.3); border-radius:4px; padding:4px 12px; font-size:11px; letter-spacing:.15em; text-transform:uppercase; color:var(--blue); margin-bottom:16px; font-family:var(--mono); }
+  .header h1 { font-size:clamp(24px,4vw,40px); font-weight:400; line-height:1.2; letter-spacing:-.5px; margin-bottom:6px; }
+  .header h2 { font-size:clamp(16px,2.5vw,24px); font-weight:400; color:var(--blue); margin-bottom:16px; }
+  .header p { color:var(--muted); font-size:15px; max-width:560px; line-height:1.6; }
+  .tabs-bar { background:var(--bg2); border-bottom:1px solid var(--border); padding:0 32px; }
+  .tabs-inner { max-width:960px; margin:0 auto; display:flex; flex-wrap:wrap; }
+  .tab-btn { background:none; border:none; border-bottom:2px solid transparent; color:var(--dim); padding:16px 18px; cursor:pointer; font-size:13px; font-family:var(--mono); letter-spacing:.05em; transition:all .2s; white-space:nowrap; }
+  .tab-btn:hover { color:var(--blue); }
+  .tab-btn.active { color:var(--blue); border-bottom-color:var(--blue); }
+  .main { max-width:960px; margin:0 auto; padding:32px; }
+  .tab-panel { display:none; }
+  .tab-panel.active { display:block; }
+  .slabel { font-size:11px; letter-spacing:.15em; text-transform:uppercase; color:var(--blue); font-family:var(--mono); margin-bottom:16px; margin-top:36px; }
+  .slabel:first-child { margin-top:0; }
+  .card { background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:20px; }
+  .grid3 { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:16px; }
+  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .grid-stat { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:20px; }
+  .meta { font-size:11px; color:var(--dim); letter-spacing:.1em; text-transform:uppercase; font-family:var(--mono); margin-bottom:4px; }
+  .meta-val { font-size:14px; color:var(--text); line-height:1.4; }
+  .domain-row { display:flex; align-items:center; gap:16px; padding:14px 18px; background:var(--bg3); border:1px solid var(--border); border-radius:6px; margin-bottom:10px; }
+  .domain-circle { width:38px; height:38px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; font-family:var(--mono); flex-shrink:0; }
+  .bar-bg { height:4px; background:var(--border); border-radius:2px; flex:1; margin-top:6px; }
+  .bar-fill { height:100%; border-radius:2px; }
+  .session-card { background:var(--bg3); border:1px solid var(--border); border-radius:8px; margin-bottom:12px; overflow:hidden; transition:border-color .2s; }
+  .s-hdr { width:100%; background:none; border:none; padding:18px 20px; cursor:pointer; display:flex; align-items:center; gap:14px; text-align:left; color:var(--text); }
+  .s-hdr:hover { background:rgba(255,255,255,.02); }
+  .s-num { width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:700; font-family:var(--mono); flex-shrink:0; }
+  .s-title { font-size:16px; color:var(--text); margin-bottom:4px; font-family:var(--serif); }
+  .s-meta { display:flex; gap:12px; flex-wrap:wrap; }
+  .cofac { font-size:10px; padding:2px 8px; border-radius:3px; background:rgba(139,92,246,.15); border:1px solid rgba(139,92,246,.3); color:var(--purple); font-family:var(--mono); }
+  .chev { color:var(--blue); font-size:16px; transition:transform .2s; margin-left:auto; flex-shrink:0; }
+  .chev.open { transform:rotate(180deg); }
+  .s-body { padding:0 20px 24px; border-top:1px solid var(--border); display:none; }
+  .s-body.open { display:block; }
+  .pw-box { background:var(--bg2); border-radius:6px; padding:16px; margin:16px 0; }
+  .box-lbl { font-size:11px; letter-spacing:.1em; text-transform:uppercase; font-family:var(--mono); margin-bottom:10px; }
+  .pw-row { font-size:14px; color:#B0B0C8; margin-bottom:6px; }
+  .pw-row strong { color:var(--text); }
+  .pw-link { font-size:14px; }
+  .pw-link a { color:var(--blue); text-decoration:none; }
+  .pw-link a:hover { text-decoration:underline; }
+  .pw-quote { font-size:14px; color:#9090C0; font-style:italic; border-left:3px solid var(--blue); padding-left:12px; margin-top:10px; }
+  .step-row { display:flex; gap:12px; padding:10px 14px; border-radius:6px; margin-bottom:8px; }
+  .step-time { font-size:11px; font-family:var(--mono); flex-shrink:0; padding-top:2px; min-width:44px; }
+  .step-title { font-size:14px; color:var(--text); margin-bottom:3px; }
+  .step-desc { font-size:13px; color:var(--muted); line-height:1.5; }
+  .lc-box { background:var(--bg2); border-radius:6px; padding:16px; }
+  .lc-lbl { font-size:11px; letter-spacing:.08em; text-transform:uppercase; font-family:var(--mono); margin-bottom:8px; }
+  /* Lucidchart blueprint styles */
+  .lc-blueprint { background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:20px; margin-bottom:16px; }
+  .lc-blueprint-title { font-size:13px; color:var(--purple); font-family:var(--mono); letter-spacing:.06em; text-transform:uppercase; margin-bottom:14px; display:flex; align-items:center; gap:12px; }
+  .lc-canvas { background:#0d0d1a; border:1px solid #2a2a3e; border-radius:6px; padding:20px; font-family:var(--mono); font-size:12px; line-height:1.8; position:relative; overflow:hidden; }
+  .lc-canvas::before { content:''; position:absolute; top:0; left:0; right:0; bottom:0; background-image:radial-gradient(circle, #2a2a3e 1px, transparent 1px); background-size:24px 24px; opacity:.4; pointer-events:none; }
+  .lc-node { display:inline-block; padding:6px 14px; border-radius:4px; font-size:12px; font-family:var(--mono); margin:3px; position:relative; z-index:1; }
+  .lc-node.rect { border-radius:4px; }
+  .lc-node.pill { border-radius:20px; }
+  .lc-node.diamond { padding:6px 20px; clip-path:polygon(50% 0%,100% 50%,50% 100%,0% 50%); border-radius:0; }
+  .lc-node.blue { background:rgba(74,158,255,.2); border:1px solid rgba(74,158,255,.5); color:var(--blue); }
+  .lc-node.purple { background:rgba(139,92,246,.2); border:1px solid rgba(139,92,246,.5); color:var(--purple); }
+  .lc-node.green { background:rgba(16,185,129,.2); border:1px solid rgba(16,185,129,.5); color:var(--green); }
+  .lc-node.amber { background:rgba(245,158,11,.2); border:1px solid rgba(245,158,11,.5); color:var(--amber); }
+  .lc-node.red { background:rgba(239,68,68,.2); border:1px solid rgba(239,68,68,.5); color:var(--red); }
+  .lc-node.cyan { background:rgba(6,182,212,.2); border:1px solid rgba(6,182,212,.5); color:var(--cyan); }
+  .lc-node.gray { background:rgba(150,150,170,.15); border:1px solid rgba(150,150,170,.3); color:var(--muted); }
+  .lc-row { display:flex; align-items:center; flex-wrap:wrap; gap:4px; margin:6px 0; position:relative; z-index:1; }
+  .lc-arr { color:var(--dim); font-size:14px; margin:0 4px; }
+  .lc-section { font-size:11px; color:var(--dim); letter-spacing:.08em; text-transform:uppercase; margin:14px 0 6px; }
+  .lc-col-wrap { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:8px; position:relative; z-index:1; margin:8px 0; }
+  .lc-col { background:rgba(255,255,255,.03); border:1px solid var(--border); border-radius:6px; padding:10px; }
+  .lc-col-title { font-size:11px; color:var(--dim); text-transform:uppercase; letter-spacing:.06em; margin-bottom:8px; }
+  .lc-col-item { font-size:12px; color:var(--muted); padding:4px 8px; background:rgba(255,255,255,.04); border-radius:3px; margin-bottom:4px; }
+  .lc-steps { counter-reset:lstep; position:relative; z-index:1; }
+  .lc-step { display:flex; align-items:flex-start; gap:10px; margin:6px 0; }
+  .lc-step::before { counter-increment:lstep; content:counter(lstep); width:20px; height:20px; border-radius:50%; background:rgba(139,92,246,.3); border:1px solid var(--purple); color:var(--purple); font-size:11px; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:1px; }
+  .lc-note { font-size:12px; color:var(--muted); background:rgba(245,158,11,.08); border:1px dashed rgba(245,158,11,.3); border-radius:4px; padding:8px 12px; margin-top:10px; position:relative; z-index:1; }
+  .lc-note strong { color:var(--amber); }
+  .tip-box { background:rgba(16,185,129,.08); border:1px solid rgba(16,185,129,.2); border-radius:6px; padding:14px; }
+  .tip-lbl { font-size:11px; letter-spacing:.08em; text-transform:uppercase; font-family:var(--mono); color:var(--green); margin-bottom:6px; }
+  .tip-text { font-size:13px; color:var(--muted); line-height:1.5; }
+  .load-row { display:flex; align-items:center; gap:16px; padding:14px 18px; background:var(--bg3); border:1px solid var(--border); border-radius:6px; margin-bottom:10px; }
+  .load-time { font-family:var(--mono); font-size:18px; font-weight:700; color:var(--blue); width:60px; flex-shrink:0; }
+  .arrow-row { display:flex; gap:12px; padding:12px 16px; background:var(--bg3); border-radius:6px; margin-bottom:8px; }
+  .info-blue { background:rgba(74,158,255,.08); border:1px solid rgba(74,158,255,.2); border-radius:6px; padding:14px; font-size:14px; color:var(--muted); line-height:1.6; }
+  .info-green { background:rgba(16,185,129,.08); border:1px solid rgba(16,185,129,.2); border-radius:6px; padding:14px; font-size:14px; color:var(--muted); line-height:1.6; }
+  .conf-block { background:var(--bg2); border:1px solid var(--border); border-radius:8px; overflow:hidden; margin-bottom:20px; }
+  .conf-hdr { background:var(--bg3); padding:16px 20px; border-bottom:1px solid var(--border); }
+  .conf-tag { font-size:11px; color:var(--dim); font-family:var(--mono); margin-bottom:4px; }
+  .conf-title { font-size:16px; color:var(--text); }
+  .conf-body { padding:24px; font-family:var(--mono); font-size:13px; color:var(--muted); line-height:2; }
+  footer { text-align:center; padding:32px; border-top:1px solid #1a1a2e; color:#40405a; font-size:12px; font-family:var(--mono); }
+  a.ext { color:var(--blue); text-decoration:none; }
+  a.ext:hover { text-decoration:underline; }
+  @media(max-width:600px){
+    .header{padding:28px 16px 20px;} .tabs-bar{padding:0 8px;} .main{padding:16px;}
+    .tab-btn{padding:12px 10px;font-size:11px;} .grid2{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-inner">
+    <div class="badge">Ignite Group · 2026</div>
+    <h1>Claude Certified Architect</h1>
+    <h2>Study Group Playbook</h2>
+    <p>10 sessions · Every 2 weeks · 45 minutes · Hybrid format<br>Designed for busy professionals. Sustainable for one organizer.</p>
+  </div>
+</div>
+
+<div class="tabs-bar">
+  <div class="tabs-inner">
+    <button class="tab-btn active" onclick="switchTab('overview',this)">Overview</button>
+    <button class="tab-btn" onclick="switchTab('curriculum',this)">10-Session Curriculum</button>
+    <button class="tab-btn" onclick="switchTab('lucidchart',this)">Lucidchart Blueprints</button>
+    <button class="tab-btn" onclick="switchTab('organizer',this)">Organizer Toolkit</button>
+    <button class="tab-btn" onclick="switchTab('confluence',this)">Confluence Template</button>
+  </div>
+</div>
+
+<div class="main">
+
+<!-- ===== OVERVIEW ===== -->
+<div class="tab-panel active" id="tab-overview">
+
+  <p class="slabel">The Exam at a Glance</p>
+  <div class="card" style="margin-bottom:16px;">
+    <div class="grid-stat">
+      <div><div class="meta">Certification</div><div class="meta-val">Claude Certified Architect – Foundations</div></div>
+      <div><div class="meta">Launched</div><div class="meta-val">March 12, 2026</div></div>
+      <div><div class="meta">Questions</div><div class="meta-val">60 questions, proctored</div></div>
+      <div><div class="meta">Duration</div><div class="meta-val">120 minutes</div></div>
+      <div><div class="meta">Prep Courses</div><div class="meta-val">13+ free on <a class="ext" href="https://anthropic.skilljar.com" target="_blank">Anthropic Academy (Skilljar)</a></div></div>
+      <div><div class="meta">Exam Access</div><div class="meta-val"><a class="ext" href="https://anthropic.skilljar.com/claude-certified-architect-foundations-access-request" target="_blank">Request via Skilljar</a></div></div>
+    </div>
+  </div>
+  <div class="info-blue" style="margin-bottom:32px;">
+    <strong style="color:var(--blue);">Note for your group:</strong> The exam requires Anthropic Partner Network access. In the meantime, all prep courses at <a class="ext" href="https://anthropic.skilljar.com" target="_blank">anthropic.skilljar.com</a> are free and open to everyone with just an email signup — no Anthropic account needed.
+  </div>
+
+  <p class="slabel">Exam Domains & Weights</p>
+  <div style="margin-bottom:32px;">
+    <div class="domain-row"><div class="domain-circle" style="background:rgba(139,92,246,.2);border:2px solid var(--purple);color:var(--purple);">27%</div><div style="flex:1"><div style="font-size:15px;margin-bottom:6px;">Agentic Architecture</div><div class="bar-bg"><div class="bar-fill" style="width:81%;background:var(--purple);"></div></div></div></div>
+    <div class="domain-row"><div class="domain-circle" style="background:rgba(6,182,212,.2);border:2px solid var(--cyan);color:var(--cyan);">20%</div><div style="flex:1"><div style="font-size:15px;margin-bottom:6px;">Claude Code Configuration</div><div class="bar-bg"><div class="bar-fill" style="width:60%;background:var(--cyan);"></div></div></div></div>
+    <div class="domain-row"><div class="domain-circle" style="background:rgba(245,158,11,.2);border:2px solid var(--amber);color:var(--amber);">20%</div><div style="flex:1"><div style="font-size:15px;margin-bottom:6px;">Prompt Engineering & Structured Output</div><div class="bar-bg"><div class="bar-fill" style="width:60%;background:var(--amber);"></div></div></div></div>
+    <div class="domain-row"><div class="domain-circle" style="background:rgba(239,68,68,.2);border:2px solid var(--red);color:var(--red);">18%</div><div style="flex:1"><div style="font-size:15px;margin-bottom:6px;">Tool Design & MCP Integration</div><div class="bar-bg"><div class="bar-fill" style="width:54%;background:var(--red);"></div></div></div></div>
+    <div class="domain-row"><div class="domain-circle" style="background:rgba(16,185,129,.2);border:2px solid var(--green);color:var(--green);">15%</div><div style="flex:1"><div style="font-size:15px;margin-bottom:6px;">Context & Reliability</div><div class="bar-bg"><div class="bar-fill" style="width:45%;background:var(--green);"></div></div></div></div>
+  </div>
+
+  <p class="slabel">Course Links — Anthropic Academy (Skilljar)</p>
+  <div class="card" style="margin-bottom:32px;">
+    <div style="font-size:13px;color:var(--muted);margin-bottom:14px;font-family:var(--mono);">All courses are free. Sign up with any email at <a class="ext" href="https://anthropic.skilljar.com" target="_blank">anthropic.skilljar.com</a></div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:8px;">
+      <a class="ext" href="https://anthropic.skilljar.com/ai-fluency-framework-foundations" target="_blank" style="display:block;padding:10px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:5px;font-size:13px;">
+        <span style="color:var(--blue);font-family:var(--mono);font-size:11px;display:block;margin-bottom:3px;">AI FLUENCY</span>
+        AI Fluency: Framework & Foundations
+      </a>
+      <a class="ext" href="https://anthropic.skilljar.com/ai-capabilities-and-limitations" target="_blank" style="display:block;padding:10px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:5px;font-size:13px;">
+        <span style="color:var(--blue);font-family:var(--mono);font-size:11px;display:block;margin-bottom:3px;">AI FLUENCY</span>
+        AI Capabilities and Limitations
+      </a>
+      <a class="ext" href="https://anthropic.skilljar.com/claude-101" target="_blank" style="display:block;padding:10px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:5px;font-size:13px;">
+        <span style="color:var(--amber);font-family:var(--mono);font-size:11px;display:block;margin-bottom:3px;">PRODUCT TRAINING</span>
+        Claude 101
+      </a>
+      <a class="ext" href="https://anthropic.skilljar.com/claude-platform-101" target="_blank" style="display:block;padding:10px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:5px;font-size:13px;">
+        <span style="color:var(--amber);font-family:var(--mono);font-size:11px;display:block;margin-bottom:3px;">PRODUCT TRAINING</span>
+        Claude Platform 101
+      </a>
+      <a class="ext" href="https://anthropic.skilljar.com/claude-with-the-anthropic-api" target="_blank" style="display:block;padding:10px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:5px;font-size:13px;">
+        <span style="color:var(--purple);font-family:var(--mono);font-size:11px;display:block;margin-bottom:3px;">DEVELOPER DEEP-DIVE</span>
+        Building with the Claude API (8+ hrs)
+      </a>
+      <a class="ext" href="https://anthropic.skilljar.com/claude-code-101" target="_blank" style="display:block;padding:10px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:5px;font-size:13px;">
+        <span style="color:var(--cyan);font-family:var(--mono);font-size:11px;display:block;margin-bottom:3px;">DEVELOPER DEEP-DIVE</span>
+        Claude Code 101
+      </a>
+      <a class="ext" href="https://anthropic.skilljar.com/claude-code-in-action" target="_blank" style="display:block;padding:10px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:5px;font-size:13px;">
+        <span style="color:var(--cyan);font-family:var(--mono);font-size:11px;display:block;margin-bottom:3px;">DEVELOPER DEEP-DIVE</span>
+        Claude Code in Action
+      </a>
+      <a class="ext" href="https://anthropic.skilljar.com/introduction-to-model-context-protocol" target="_blank" style="display:block;padding:10px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:5px;font-size:13px;">
+        <span style="color:var(--red);font-family:var(--mono);font-size:11px;display:block;margin-bottom:3px;">DEVELOPER DEEP-DIVE</span>
+        Introduction to Model Context Protocol
+      </a>
+      <a class="ext" href="https://anthropic.skilljar.com/model-context-protocol-advanced-topics" target="_blank" style="display:block;padding:10px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:5px;font-size:13px;">
+        <span style="color:var(--red);font-family:var(--mono);font-size:11px;display:block;margin-bottom:3px;">DEVELOPER DEEP-DIVE</span>
+        Model Context Protocol: Advanced Topics
+      </a>
+      <a class="ext" href="https://anthropic.skilljar.com/introduction-to-agent-skills" target="_blank" style="display:block;padding:10px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:5px;font-size:13px;">
+        <span style="color:var(--purple);font-family:var(--mono);font-size:11px;display:block;margin-bottom:3px;">DEVELOPER DEEP-DIVE</span>
+        Introduction to Agent Skills
+      </a>
+      <a class="ext" href="https://anthropic.skilljar.com/introduction-to-subagents" target="_blank" style="display:block;padding:10px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:5px;font-size:13px;">
+        <span style="color:var(--purple);font-family:var(--mono);font-size:11px;display:block;margin-bottom:3px;">DEVELOPER DEEP-DIVE</span>
+        Introduction to Subagents
+      </a>
+      <a class="ext" href="https://anthropic.skilljar.com/introduction-to-claude-cowork" target="_blank" style="display:block;padding:10px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:5px;font-size:13px;">
+        <span style="color:var(--green);font-family:var(--mono);font-size:11px;display:block;margin-bottom:3px;">PRODUCT TRAINING</span>
+        Introduction to Claude Cowork
+      </a>
+    </div>
+  </div>
+
+  <p class="slabel" style="margin-top:28px;">Udemy Courses — Dive Deeper</p>
+  <div class="card" style="margin-bottom:32px;">
+    <div style="font-size:13px;color:var(--muted);margin-bottom:14px;font-family:var(--mono);">Available via Udemy for Business access. Use these when you want to go beyond the Skilljar content.</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:8px;">
+      <a class="ext" href="https://www.udemy.com/course/claude-ai-certification/" target="_blank" style="display:block;padding:10px 14px;background:var(--bg2);border:1px solid rgba(245,158,11,.25);border-radius:5px;font-size:13px;">
+        <span style="color:var(--amber);font-family:var(--mono);font-size:11px;display:block;margin-bottom:3px;">⭐ CCA-F EXAM PREP</span>
+        Claude Certified Architect: Foundations Exam Guide – 2026
+      </a>
+      <a class="ext" href="https://www.udemy.com/course/claude-certified-architect-certification-5-practice-tests/" target="_blank" style="display:block;padding:10px 14px;background:var(--bg2);border:1px solid rgba(245,158,11,.25);border-radius:5px;font-size:13px;">
+        <span style="color:var(--amber);font-family:var(--mono);font-size:11px;display:block;margin-bottom:3px;">⭐ CCA-F PRACTICE EXAMS</span>
+        Claude Certified Architect 2026: 5 Full-Length Practice Tests
+      </a>
+      <a class="ext" href="https://www.udemy.com/course/claude-architect-foundations-practice-tests/" target="_blank" style="display:block;padding:10px 14px;background:var(--bg2);border:1px solid rgba(245,158,11,.25);border-radius:5px;font-size:13px;">
+        <span style="color:var(--amber);font-family:var(--mono);font-size:11px;display:block;margin-bottom:3px;">CCA-F PRACTICE EXAMS</span>
+        Claude Architect Foundations Practice Tests (2026) — 240 Questions
+      </a>
+      <a class="ext" href="https://www.udemy.com/course/chatgpt-promptengineering/" target="_blank" style="display:block;padding:10px 14px;background:var(--bg2);border:1px solid rgba(245,158,11,.25);border-radius:5px;font-size:13px;">
+        <span style="color:var(--amber);font-family:var(--mono);font-size:11px;display:block;margin-bottom:3px;">PROMPT ENGINEERING</span>
+        Prompt & Context Engineering 101 for ChatGPT & Claude
+      </a>
+      <a class="ext" href="https://www.udemy.com/course/the-complete-agentic-ai-engineering-course/" target="_blank" style="display:block;padding:10px 14px;background:var(--bg2);border:1px solid rgba(245,158,11,.25);border-radius:5px;font-size:13px;">
+        <span style="color:var(--amber);font-family:var(--mono);font-size:11px;display:block;margin-bottom:3px;">AGENTIC AI + MCP</span>
+        AI Engineer Agentic Track: The Complete Agent & MCP Course (Ed Donner)
+      </a>
+      <a class="ext" href="https://www.udemy.com/course/claude-aiagents-cowork-masterclass/" target="_blank" style="display:block;padding:10px 14px;background:var(--bg2);border:1px solid rgba(245,158,11,.25);border-radius:5px;font-size:13px;">
+        <span style="color:var(--amber);font-family:var(--mono);font-size:11px;display:block;margin-bottom:3px;">CLAUDE ECOSYSTEM</span>
+        The Complete Claude Code & Claude Cowork Masterclass [2026]
+      </a>
+    </div>
+  </div>
+  <div class="grid3" style="margin-bottom:32px;">
+    <div class="card" style="border-color:rgba(74,158,255,.3);">
+      <div style="font-size:11px;color:var(--blue);font-family:var(--mono);margin-bottom:8px;">PHASE 1 · SESSIONS 1–3</div>
+      <div style="font-size:20px;margin-bottom:8px;">Foundation</div>
+      <div style="font-size:13px;color:var(--muted);">Mental models, vocabulary, and group cohesion</div>
+    </div>
+    <div class="card" style="border-color:rgba(139,92,246,.3);">
+      <div style="font-size:11px;color:var(--purple);font-family:var(--mono);margin-bottom:8px;">PHASE 2 · SESSIONS 4–7</div>
+      <div style="font-size:20px;margin-bottom:8px;">Application</div>
+      <div style="font-size:13px;color:var(--muted);">Exam domains applied to real workplace scenarios</div>
+    </div>
+    <div class="card" style="border-color:rgba(16,185,129,.3);">
+      <div style="font-size:11px;color:var(--green);font-family:var(--mono);margin-bottom:8px;">PHASE 3 · SESSIONS 8–10</div>
+      <div style="font-size:20px;margin-bottom:8px;">Synthesis</div>
+      <div style="font-size:13px;color:var(--muted);">Mock exam, practice, and celebration</div>
+    </div>
+  </div>
+
+  <p class="slabel">Repeatable 45-Min Session Structure</p>
+  <div class="grid3">
+    <div class="card" style="border-color:rgba(74,158,255,.3);">
+      <div style="font-size:11px;color:var(--blue);font-family:var(--mono);margin-bottom:6px;">0–15 MIN</div>
+      <div style="font-size:15px;margin-bottom:6px;">Concept Anchor</div>
+      <div style="font-size:13px;color:var(--muted);">Recap pre-work. You curate, not teach.</div>
+    </div>
+    <div class="card" style="border-color:rgba(139,92,246,.3);">
+      <div style="font-size:11px;color:var(--purple);font-family:var(--mono);margin-bottom:6px;">15–40 MIN</div>
+      <div style="font-size:15px;margin-bottom:6px;">Lucidchart Activity</div>
+      <div style="font-size:13px;color:var(--muted);">Hands-on, collaborative, structured.</div>
+    </div>
+    <div class="card" style="border-color:rgba(16,185,129,.3);">
+      <div style="font-size:11px;color:var(--green);font-family:var(--mono);margin-bottom:6px;">40–45 MIN</div>
+      <div style="font-size:15px;margin-bottom:6px;">Wrap</div>
+      <div style="font-size:13px;color:var(--muted);">One takeaway. Next pre-work. Exit ticket.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== CURRICULUM ===== -->
+<div class="tab-panel" id="tab-curriculum">
+  <p style="font-size:14px;color:var(--muted);margin-bottom:24px;line-height:1.6;">Click any session to expand the full plan, pre-work with direct course links, and facilitator tips.</p>
+  <div id="sessions-container"></div>
+</div>
+
+<!-- ===== LUCIDCHART BLUEPRINTS ===== -->
+<div class="tab-panel" id="tab-lucidchart">
+  <p style="font-size:14px;color:var(--muted);margin-bottom:8px;line-height:1.6;">Visual blueprints for all 10 Lucidchart boards. Build these in Lucidchart before each session using these layouts as your starting template.</p>
+  <div class="info-blue" style="margin-bottom:28px;">
+    <strong style="color:var(--blue);">How to use these:</strong> Each blueprint shows the exact shapes, columns, and flow to pre-build in Lucidchart. Share the edit link in the Teams chat so both remote and in-person participants can contribute live during the session.
+  </div>
+  <div id="blueprints-container"></div>
+</div>
+
+<!-- ===== ORGANIZER ===== -->
+<div class="tab-panel" id="tab-organizer">
+  <p class="slabel">Your Weekly Time Budget</p>
+  <div style="margin-bottom:16px;">
+    <div class="load-row"><div class="load-time">15 min</div><div><div style="font-size:14px;color:var(--text);margin-bottom:3px;">Pre-session</div><div style="font-size:13px;color:var(--muted);">Update Confluence with pre-work link + reflection question</div></div></div>
+    <div class="load-row"><div class="load-time">45 min</div><div><div style="font-size:14px;color:var(--text);margin-bottom:3px;">During session</div><div style="font-size:13px;color:var(--muted);">Facilitate — manage time, run Lucidchart activity, don't teach</div></div></div>
+    <div class="load-row"><div class="load-time">15 min</div><div><div style="font-size:14px;color:var(--text);margin-bottom:3px;">Post-session</div><div style="font-size:13px;color:var(--muted);">Chase note-taker, send 1-paragraph Outlook recap email</div></div></div>
+  </div>
+  <div class="info-green" style="margin-bottom:32px;">Total per session cycle: ~<strong style="color:var(--green);">75 minutes</strong>. After Session 3, co-facilitators absorb more of the prep load.</div>
+
+  <p class="slabel">Anti-Ghost Playbook</p>
+  <div style="margin-bottom:32px;">
+    <div class="card" style="margin-bottom:10px;"><div style="font-size:14px;color:var(--text);margin-bottom:6px;">Accountability Pairs</div><div style="font-size:13px;color:var(--muted);line-height:1.5;">Assign at Session 1. Each pair sends a check-in Teams message before each session. Personal beats group for accountability.</div></div>
+    <div class="card" style="margin-bottom:10px;"><div style="font-size:14px;color:var(--text);margin-bottom:6px;">Rotating Roles</div><div style="font-size:13px;color:var(--muted);line-height:1.5;">Note-taker posts 5-bullet Confluence recap within 24hrs. Activity lead runs the Lucidchart exercise with you. Rotate every session.</div></div>
+    <div class="card" style="margin-bottom:10px;"><div style="font-size:14px;color:var(--text);margin-bottom:6px;">Exit Ticket</div><div style="font-size:13px;color:var(--muted);line-height:1.5;">Every session ends with each person typing 1 takeaway into Confluence or Lucidchart. 60 seconds. Creates participation record.</div></div>
+    <div class="card" style="margin-bottom:10px;"><div style="font-size:14px;color:var(--text);margin-bottom:6px;">Personal Outreach</div><div style="font-size:13px;color:var(--muted);line-height:1.5;">If someone misses a session, DM them — not a group note. "Hey, missed you today, here's what we covered [link]." Takes 2 minutes.</div></div>
+    <div class="card"><div style="font-size:14px;color:var(--text);margin-bottom:6px;">Session 5 Pulse Check</div><div style="font-size:13px;color:var(--muted);line-height:1.5;">Halfway point Outlook poll: Are you getting value? Is the time commitment realistic? What's one thing we should change?</div></div>
+  </div>
+
+  <p class="slabel">Building Toward Experts</p>
+  <div class="grid3" style="margin-bottom:32px;">
+    <div class="card"><div style="font-size:11px;color:var(--purple);font-family:var(--mono);letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px;">Sessions 1–3</div><div style="font-size:13px;color:var(--muted);line-height:1.5;">Watch for who asks the best questions and goes deeper than the pre-work. These are your future co-facilitators.</div></div>
+    <div class="card"><div style="font-size:11px;color:var(--purple);font-family:var(--mono);letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px;">Sessions 4–5</div><div style="font-size:13px;color:var(--muted);line-height:1.5;">Invite 1–2 technical people to co-present the Concept Anchor. Frame it as: "I'd love your take — can you take 5 minutes?"</div></div>
+    <div class="card"><div style="font-size:11px;color:var(--purple);font-family:var(--mono);letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px;">Sessions 6–10</div><div style="font-size:13px;color:var(--muted);line-height:1.5;">Formally recruit a co-facilitator. Share prep. By Session 8 they lead, you manage logistics.</div></div>
+  </div>
+
+  <p class="slabel">Hybrid Session Tips</p>
+  <div>
+    <div class="arrow-row"><span style="color:var(--blue);font-family:var(--mono);">→</span><span style="font-size:13px;color:var(--muted);line-height:1.5;">Share Lucidchart link in Teams chat before the session starts — remote and in-person both click in simultaneously.</span></div>
+    <div class="arrow-row"><span style="color:var(--blue);font-family:var(--mono);">→</span><span style="font-size:13px;color:var(--muted);line-height:1.5;">Designate one in-person person as "remote advocate" — they flag when a remote participant has their hand up.</span></div>
+    <div class="arrow-row"><span style="color:var(--blue);font-family:var(--mono);">→</span><span style="font-size:13px;color:var(--muted);line-height:1.5;">Record sessions. Post the link to Confluence with the session recap so people who miss can catch up.</span></div>
+    <div class="arrow-row"><span style="color:var(--blue);font-family:var(--mono);">→</span><span style="font-size:13px;color:var(--muted);line-height:1.5;">For the Concept Anchor, screen-share Confluence — it becomes the shared visual anchor for in-person and remote equally.</span></div>
+    <div class="arrow-row"><span style="color:var(--blue);font-family:var(--mono);">→</span><span style="font-size:13px;color:var(--muted);line-height:1.5;">Exit ticket works better in Confluence comments than verbally — everyone types simultaneously.</span></div>
+  </div>
+</div>
+
+<!-- ===== CONFLUENCE ===== -->
+<div class="tab-panel" id="tab-confluence">
+  <p style="font-size:14px;color:var(--muted);margin-bottom:24px;line-height:1.6;">Copy this structure into your Confluence page. Set it up before Session 1 and share the link in the meeting invite.</p>
+  <div class="conf-block">
+    <div class="conf-hdr"><div class="conf-tag">CONFLUENCE PAGE STRUCTURE</div><div class="conf-title">Claude Certified Architect — Study Group Hub</div></div>
+    <div class="conf-body">
+      <div style="color:var(--blue);font-size:15px;margin-bottom:4px;">H1: Claude Certified Architect Study Group</div>
+      <div style="padding-left:16px;margin-bottom:16px;">Tagline · Start date · Session schedule · Facilitator contact</div>
+      <div style="color:var(--blue);font-size:14px;margin-bottom:4px;">H2: Quick Links</div>
+      <div style="padding-left:16px;margin-bottom:16px;">
+        → <a class="ext" href="https://anthropic.skilljar.com" target="_blank">Anthropic Academy (Skilljar)</a> — free courses<br>
+        → <a class="ext" href="https://anthropic.skilljar.com/claude-certified-architect-foundations-access-request" target="_blank">Exam access request</a><br>
+        → Lucidchart Workspace — [your link]<br>
+        → Session Recording Folder — [your link]<br>
+        → Accountability Pairs List — [your link]
+      </div>
+      <div style="color:var(--blue);font-size:14px;margin-bottom:4px;">H2: Current Session</div>
+      <div style="padding-left:16px;margin-bottom:16px;">
+        → Session #: [Title]<br>
+        → Date: [Date]<br>
+        → Pre-Work: [Direct Skilljar course link + section]<br>
+        → Reflection question: "[Question to bring to session]"<br>
+        → Lucidchart link for this session: [link]
+      </div>
+      <div style="color:var(--blue);font-size:14px;margin-bottom:4px;">H2: Session Archive</div>
+      <div style="padding-left:16px;margin-bottom:16px;">
+        <div style="color:var(--purple);margin-bottom:2px;">H3: Session 01 — [Title] — [Date]</div>
+        <div style="padding-left:16px;">
+          → 5-bullet recap (note-taker posts within 24hrs)<br>
+          → Key concepts covered<br>
+          → Lucidchart diagram link<br>
+          → Exit ticket responses<br>
+          → Recording link (if available)
+        </div>
+        <div style="color:var(--dim);margin-top:6px;">[Repeat for each session]</div>
+      </div>
+      <div style="color:var(--blue);font-size:14px;margin-bottom:4px;">H2: Group Study Bank</div>
+      <div style="padding-left:16px;margin-bottom:16px;">
+        → Practice questions (added after Sessions 8–9)<br>
+        → Vocabulary glossary (built collaboratively)<br>
+        → Domain cheat sheets (one per domain)<br>
+        → "Things Claude did that surprised us" running list
+      </div>
+      <div style="color:var(--blue);font-size:14px;margin-bottom:4px;">H2: Exam Resources</div>
+      <div style="padding-left:16px;">
+        → All Anthropic Academy course links (see Overview tab)<br>
+        → <a class="ext" href="https://www.udemy.com/course/claude-ai-certification/" target="_blank">CCA-F Exam Guide (Udemy)</a><br>
+        → <a class="ext" href="https://www.udemy.com/course/claude-certified-architect-certification-5-practice-tests/" target="_blank">CCA-F 5 Practice Tests (Udemy)</a><br>
+        → <a class="ext" href="https://www.udemy.com/course/the-complete-agentic-ai-engineering-course/" target="_blank">Agentic AI + MCP Course — Ed Donner (Udemy)</a><br>
+        → Partner Network access status
+      </div>
+    </div>
+  </div>
+  <div class="conf-block">
+    <div class="conf-hdr"><div class="conf-tag">NOTE-TAKER TEMPLATE — paste into Confluence within 24hrs</div><div class="conf-title">Session Recap Template</div></div>
+    <div class="conf-body">
+      <div style="color:var(--text);">Session [#] — [Title] — [Date]</div>
+      <div style="color:var(--dim);margin-bottom:12px;">Note-taker: [Name]</div>
+      <div style="color:var(--purple);margin-bottom:4px;">What we covered (5 bullets max):</div>
+      <div style="padding-left:16px;margin-bottom:12px;">• [bullet 1]<br>• [bullet 2]<br>• [bullet 3]<br>• [bullet 4]<br>• [bullet 5]</div>
+      <div style="color:var(--purple);margin-bottom:4px;">Key concept to remember:</div>
+      <div style="padding-left:16px;margin-bottom:12px;">[One sentence]</div>
+      <div style="color:var(--purple);margin-bottom:4px;">Lucidchart diagram:</div>
+      <div style="padding-left:16px;margin-bottom:12px;">[Link]</div>
+      <div style="color:var(--purple);margin-bottom:4px;">Exit ticket responses:</div>
+      <div style="padding-left:16px;">[Copy from Lucidchart/Teams chat]</div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /main -->
+<footer>Claude Certified Architect Study Group · Ignite · 10 Sessions · 20 Weeks</footer>
+
+<script>
+const SC = {open:"#4A9EFF",anchor:"#F59E0B",activity:"#8B5CF6",wrap:"#10B981"};
+
+const sessions=[
+  {n:1,phase:1,color:"#4A9EFF",title:"Why This Matters & How Claude Actually Works",domain:"Foundation",examWeight:null,coFac:false,
+   prework:{source:"Anthropic Academy",course:"AI Fluency: Framework & Foundations",url:"https://anthropic.skilljar.com/ai-fluency-framework-foundations",also:"AI Capabilities and Limitations",alsoUrl:"https://anthropic.skilljar.com/ai-capabilities-and-limitations",udemy:"The Complete Claude Code & Claude Cowork Masterclass [2026]",udemyUrl:"https://www.udemy.com/course/claude-aiagents-cowork-masterclass/",duration:"~25 mins total",task:"Watch the AI Fluency intro. Come ready to answer: what's one thing about how Claude works that surprised you?"},
+   steps:[{t:"0–5",type:"open",label:"Welcome & Intros",desc:"Why each person joined. Quick poll: how often do you use Claude at work today?"},{t:"5–20",type:"anchor",label:"Concept Anchor",desc:"What is Claude? Large language models in plain English. Key vocab: tokens, context window, prompt, response. No technical depth required."},{t:"20–40",type:"activity",label:"Lucidchart Activity",desc:"Map your current day-to-day work tasks. Circle every task where Claude could plausibly help. Share and compare across the group."},{t:"40–45",type:"wrap",label:"Wrap",desc:"One takeaway each. Assign accountability pairs. Explain rotating roles (note-taker, activity lead). Post to Confluence within 24hrs."}],
+   lucidLabel:"Personal Workflow Map — swim lanes + sticky notes",
+   lucidEdit:"https://lucid.app/lucidspark/3d1eb4da-c26d-44c9-bf6e-0bba506efe8c/edit",
+   conf:"Post vocab list + 3 key concepts from today's session",
+   tip:"Don't try to be the expert. Your job is to manage time and energy. If someone knows more than you, let them talk."},
+  {n:2,phase:1,color:"#F59E0B",title:"Prompting Fundamentals — Getting Claude to Do What You Mean",domain:"Prompt Engineering",examWeight:"20%",coFac:false,
+   prework:{source:"Anthropic Academy",course:"Claude 101",url:"https://anthropic.skilljar.com/claude-101",also:"Claude Platform 101",alsoUrl:"https://anthropic.skilljar.com/claude-platform-101",udemy:"Prompt and Context Engineering 101 for ChatGPT & Claude",udemyUrl:"https://www.udemy.com/course/chatgpt-promptengineering/",duration:"~30 mins",task:"Watch Claude 101. Write one prompt you currently use at work and bring it to the session."},
+   steps:[{t:"0–5",type:"open",label:"Check-in",desc:"Pairs share: did you watch the pre-work? What was your one surprising thing?"},{t:"5–15",type:"anchor",label:"Concept Anchor",desc:"Role prompts, context-setting, positive vs. negative instructions. The 'what to do' vs. 'what not to do' principle."},{t:"15–40",type:"activity",label:"Lucidchart Activity",desc:"Prompt teardown. Each person pastes their work prompt onto the shared board. Group grades it: Clear context? Clear role? Clear format? Rewrites in real time."},{t:"40–45",type:"wrap",label:"Wrap",desc:"Exit ticket: type your one rewritten prompt into the Confluence page before you leave."}],
+   lucidLabel:"Prompt Grading Rubric Board — teardown columns per person",
+   lucidEdit:"https://lucid.app/lucidspark/f130b95f-9fab-4a52-99c0-a10c05403448/edit",
+   conf:"Store the prompt rubric template here for ongoing use",
+   tip:"You don't need to judge the prompts. Let the group do it. Your role is to run the timer."},
+  {n:3,phase:1,color:"#10B981",title:"Context & Reliability — Why Claude Forgets and How to Fix It",domain:"Context & Reliability",examWeight:"15%",coFac:false,
+   prework:{source:"Anthropic Academy",course:"Building with the Claude API",url:"https://anthropic.skilljar.com/claude-with-the-anthropic-api",also:null,alsoUrl:null,udemy:"Claude Certified Architect: Foundations Exam Guide – 2026",udemyUrl:"https://www.udemy.com/course/claude-ai-certification/",duration:"~25 mins (first 2 modules only)",task:"Watch the first two modules on context and API basics. Come with a real example where Claude gave you an inconsistent or surprising answer."},
+   steps:[{t:"0–5",type:"open",label:"Check-in",desc:"Share your 'Claude surprised me' example. Collect them on a sticky board."},{t:"5–18",type:"anchor",label:"Concept Anchor",desc:"Context window explained visually. What 'forgetting' actually means. Strategies: include full context, progressive summarization, structured state."},{t:"18–40",type:"activity",label:"Lucidchart Activity",desc:"Context failure diagnosis. Take 3 of the surprise stories from check-in. Group diagnoses: was it a context problem? A prompt problem? Map it on the board."},{t:"40–45",type:"wrap",label:"Wrap",desc:"Identify who in the group has used Claude most technically. Flag them as potential future co-facilitator for Phase 2."}],
+   lucidLabel:"Context Failure Diagnosis Tree — branching flowchart",
+   lucidEdit:"https://lucid.app/lucidchart/7a4e0b5c-205a-4cc0-95ee-c73ad4f618d4/edit",
+   conf:"Post the 'context checklist' — 5 things to include in every high-stakes prompt",
+   tip:"By end of Session 3, know who your 2–3 technical people are. Start conversations about co-facilitating Sessions 4–7."},
+  {n:4,phase:2,color:"#8B5CF6",title:"Agentic Architecture — How Claude Thinks in Multi-Step Tasks",domain:"Agentic Architecture",examWeight:"27%",coFac:true,
+   prework:{source:"Anthropic Academy",course:"Building with the Claude API",url:"https://anthropic.skilljar.com/claude-with-the-anthropic-api",also:"Introduction to Agent Skills",alsoUrl:"https://anthropic.skilljar.com/introduction-to-agent-skills",udemy:"AI Engineer Agentic Track: The Complete Agent & MCP Course",udemyUrl:"https://www.udemy.com/course/the-complete-agentic-ai-engineering-course/",duration:"~30 mins",task:"Watch the agentic architecture modules. Look up one example of an AI agent being used in financial services or operations."},
+   steps:[{t:"0–5",type:"open",label:"Check-in",desc:"Share your financial services AI agent example."},{t:"5–18",type:"anchor",label:"Concept Anchor (co-facilitate if possible)",desc:"Agentic loop: plan → act → observe → repeat. Hub-and-spoke orchestration. Where things break in production. Conceptual only — no code."},{t:"18–40",type:"activity",label:"Lucidchart Activity",desc:"Design a workplace workflow as an agent. Pick one: trade confirmation emails, report summarization, client onboarding. Map the agentic loop."},{t:"40–45",type:"wrap",label:"Wrap",desc:"What would break in real production? Each person adds one 'failure point' sticky to the diagram."}],
+   lucidLabel:"Agentic Loop Diagram — plan → act → observe → loop/stop",
+   lucidEdit:"https://lucid.app/lucidchart/d74ce7a3-4aca-4816-8a92-777dfe9511f1/edit",
+   conf:"Post completed workflow diagrams + a 'what could break' risk list",
+   tip:"This is the highest-weight exam domain (27%). Make sure people understand the loop concept — not the code, just the pattern."},
+  {n:5,phase:2,color:"#EF4444",title:"Tool Design & MCP — How Claude Connects to the Real World",domain:"Tool Design & MCP",examWeight:"18%",coFac:true,
+   prework:{source:"Anthropic Academy",course:"Introduction to Model Context Protocol",url:"https://anthropic.skilljar.com/introduction-to-model-context-protocol",also:"MCP Advanced Topics",alsoUrl:"https://anthropic.skilljar.com/model-context-protocol-advanced-topics",udemy:"AI Engineer Agentic Track: The Complete Agent & MCP Course",udemyUrl:"https://www.udemy.com/course/the-complete-agentic-ai-engineering-course/",duration:"~25 mins",task:"Watch the MCP intro. Write down in plain English: what is a 'tool' when we talk about AI?"},
+   steps:[{t:"0–5",type:"open",label:"Check-in",desc:"Share your plain-English definition of a 'tool.' Compare across the group."},{t:"5–18",type:"anchor",label:"Concept Anchor",desc:"MCP without jargon: it's how Claude talks to other systems. Tools = things Claude can do. Resources = things Claude can read. Key insight: tool descriptions matter more than most people think."},{t:"18–40",type:"activity",label:"Lucidchart Activity",desc:"Tool design workshop. Pick a hypothetical Claude tool for your team. Write its description. Group rates each: would Claude use this correctly based on the description alone?"},{t:"40–45",type:"wrap",label:"Wrap",desc:"Midpoint check-in: confidence level 1–5 on a Confluence poll."}],
+   lucidLabel:"MCP Architecture Map — Host → Client → Server + tool design cards",
+   lucidEdit:"https://lucid.app/lucidchart/5a3b4741-e3f2-4fd2-986d-dc8c92f43ace/edit",
+   conf:"Post everyone's tool descriptions + ratings. This becomes a reference for exam prep.",
+   tip:"Halfway point. Check in with your accountability pairs — who has ghosted? Send a personal note, not a group message."},
+  {n:6,phase:2,color:"#06B6D4",title:"Claude Code — AI-Assisted Development in Practice",domain:"Claude Code Configuration",examWeight:"20%",coFac:true,
+   prework:{source:"Anthropic Academy",course:"Claude Code 101",url:"https://anthropic.skilljar.com/claude-code-101",also:"Claude Code in Action",alsoUrl:"https://anthropic.skilljar.com/claude-code-in-action",udemy:"Claude Certified Architect: Foundations Exam Guide – 2026",udemyUrl:"https://www.udemy.com/course/claude-ai-certification/",duration:"~30 mins",task:"Non-technical: watch Claude Code 101, focus on what it can do. Technical: watch Claude Code in Action and try one task before the session."},
+   steps:[{t:"0–5",type:"open",label:"Check-in",desc:"Technical folks: share what you tried. Non-technical folks: share one use case you'd hand to a developer."},{t:"5–18",type:"anchor",label:"Concept Anchor (technical co-facilitator leads)",desc:"What Claude Code actually is. CLAUDE.md configuration. Plan mode vs. execution mode. Why this matters in enterprise environments (compliance, auditability, CI/CD)."},{t:"18–40",type:"activity",label:"Lucidchart Activity",desc:"Split the room. Technical: diagram a Claude Code workflow. Non-technical: write the requirements doc for that same workflow. Bring them together at minute 35 — do they match?"},{t:"40–45",type:"wrap",label:"Wrap",desc:"Discuss: what does a non-technical person need to understand about Claude Code to work with engineers who use it?"}],
+   lucidLabel:"Claude Code Split Room — requirements doc vs. architecture diagram",
+   lucidEdit:"https://lucid.app/lucidchart/b8a83a68-ec7b-4183-865d-1e0392f2acd5/edit",
+   conf:"Post the 'what non-technical people need to know about Claude Code' summary — group-authored",
+   tip:"This session bridges the technical/non-technical divide. The goal isn't for everyone to code — it's for everyone to communicate clearly across the gap."},
+  {n:7,phase:2,color:"#F59E0B",title:"Structured Output & Multi-Agent Systems",domain:"Prompt Engineering + Agentic Architecture",examWeight:"20% + 27%",coFac:true,
+   prework:{source:"Anthropic Academy",course:"Introduction to Subagents",url:"https://anthropic.skilljar.com/introduction-to-subagents",also:"Building with the Claude API",alsoUrl:"https://anthropic.skilljar.com/claude-with-the-anthropic-api",udemy:"AI Engineer Agentic Track: The Complete Agent & MCP Course",udemyUrl:"https://www.udemy.com/course/the-complete-agentic-ai-engineering-course/",duration:"~28 mins",task:"Watch the Subagents course. Think of a workflow at your organization that involves multiple steps handled by different people or systems."},
+   steps:[{t:"0–5",type:"open",label:"Check-in",desc:"Share your multi-step workflow example from pre-work."},{t:"5–18",type:"anchor",label:"Concept Anchor",desc:"Structured output: getting Claude to respond in predictable formats (JSON, tables). Multi-agent systems: orchestrator + worker pattern. Why subagents help manage context."},{t:"18–40",type:"activity",label:"Lucidchart Activity",desc:"Redesign your pre-work workflow as a multi-agent system. Who is the orchestrator? What are the workers? What format does each agent output?"},{t:"40–45",type:"wrap",label:"Wrap",desc:"Poll: for Phase 3 do people want mock exam questions, case scenarios, or group debates?"}],
+   lucidLabel:"Multi-Agent Orchestration — orchestrator + workers + pre-seeded example",
+   lucidEdit:"https://lucid.app/lucidchart/d2eb3958-12ac-4f06-b23c-fe46e9d0b787/edit",
+   conf:"Post completed orchestration diagrams. These become study references for Domain 1 (exam's highest-weight domain).",
+   tip:"By end of Session 7, you should have 2–3 people who could lead a session. Have that conversation explicitly."},
+  {n:8,phase:3,color:"#EC4899",title:"Exam Domain Deep Dive — Synthesis & Practice Questions",domain:"All Domains",examWeight:null,coFac:false,
+   prework:{source:"Review",course:"Your Confluence session notes from Sessions 1–7",url:null,also:null,alsoUrl:null,udemy:"Claude Certified Architect 2026: 5 Full-Length Practice Tests",udemyUrl:"https://www.udemy.com/course/claude-certified-architect-certification-5-practice-tests/",duration:"~30 mins",task:"Review your notes. Write down your 3 weakest areas and 1 question you still can't answer confidently."},
+   steps:[{t:"0–5",type:"open",label:"Check-in",desc:"Everyone states their #1 weak area. Facilitator tallies on shared board."},{t:"5–25",type:"anchor",label:"Practice Question Round",desc:"Work through 5–8 scenario-based questions as a group. Open discussion: 'In this situation, what would you design and why?' Prioritize the top weak areas."},{t:"25–40",type:"activity",label:"Domain Blitz",desc:"Split into 5 groups (one per exam domain). 8 minutes per group to produce a one-sentence summary of their domain + its most important concept."},{t:"40–45",type:"wrap",label:"Wrap",desc:"Assign: for Session 9, each person prepares ONE practice question to bring."}],
+   lucidLabel:"Five-Domain Confidence Radar — 1–5 rating columns per domain",
+   lucidEdit:"https://lucid.app/lucidspark/753c14db-c579-487e-a7e9-9e76b5df1573/edit",
+   conf:"Post the practice questions discussed + group answers. This becomes the group's shared study guide.",
+   tip:"Your job in Phase 3 shifts to moderator, not facilitator. Let the group drive. Step in only to keep time."},
+  {n:9,phase:3,color:"#EC4899",title:"Group-Generated Mock Exam",domain:"All Domains",examWeight:null,coFac:false,
+   prework:{source:"Group-prepared",course:"Each person writes 1 practice question",url:null,also:null,alsoUrl:null,udemy:"Claude Architect Foundations Practice Tests (2026)",udemyUrl:"https://www.udemy.com/course/claude-architect-foundations-practice-tests/",duration:"~20 mins",task:"Write one scenario-based question covering any exam domain. Bring it — you'll be presenting it."},
+   steps:[{t:"0–5",type:"open",label:"Setup",desc:"Collect all questions. Group votes on 6–8 to discuss."},{t:"5–38",type:"activity",label:"Mock Exam",desc:"Question author presents their scenario. Group has 3 minutes to discuss and answer. Author reveals their best answer. Group debates."},{t:"38–45",type:"wrap",label:"Wrap",desc:"Flag anyone still behind. Offer a Confluence 'study buddy' pairing for last two weeks. Tease Session 10 as celebration."}],
+   lucidLabel:"Mock Exam Question Voting Board — card sort + dot votes",
+   lucidEdit:"https://lucid.app/lucidspark/5003d5f5-441d-4836-a1e1-631fd6e46a60/edit",
+   conf:"Post all submitted questions + best answers as a permanent group study bank",
+   tip:"This session requires almost no prep from you. The group runs it. Your job is time-keeping and making sure quieter members have space."},
+  {n:10,phase:3,color:"#10B981",title:"Retrospective, Recognition & What's Next",domain:"Closing",examWeight:null,coFac:false,
+   prework:{source:"Reflection only",course:"No material — just reflect",url:null,also:null,alsoUrl:null,udemy:"Claude Certified Architect: Foundations Exam Guide – 2026",udemyUrl:"https://www.udemy.com/course/claude-ai-certification/",duration:"~10 mins",task:"Think about: what was your biggest learning? What would you do differently? What do you want to do next with this knowledge?"},
+   steps:[{t:"0–10",type:"open",label:"Retrospective",desc:"Each person: biggest learning in 1 sentence. What surprised them. What they'd tell someone starting this group."},{t:"10–25",type:"anchor",label:"Where Do We Go From Here?",desc:"Discuss: is the group ready for the exam? What gaps remain? What would a second cohort or advanced sessions look like?"},{t:"25–40",type:"activity",label:"Group Knowledge Map",desc:"Final Lucidchart: build a collective 'what we know' map. Five domains, each person adds one contribution per domain."},{t:"40–45",type:"wrap",label:"Celebration + Next Steps",desc:"Recognize contributors, note-takers, co-facilitators by name. Share the Confluence archive. Announce any next steps."}],
+   lucidLabel:"Collective Knowledge Map — five-domain mind map + message to next cohort",
+   lucidEdit:"https://lucid.app/lucidspark/f8ce4a35-19ea-4a29-b913-7f865075454c/edit",
+   conf:"Final session recap + group roster + all 10 session notes indexed. This page becomes the group's legacy document.",
+   tip:"End with energy. This is a real achievement. 10 sessions, 25 people, 20 weeks. That's hard to sustain and they did it."}
+];
+
+const blueprints=[
+  {n:1,color:"#4A9EFF",title:"Personal Workflow Map",type:"Sticky Note Board",
+   desc:"Each person gets their own swim lane. They list their daily work tasks as sticky notes, then the group adds green 'Claude could help' tags to relevant ones.",
+   setup:[
+     "Create a large canvas with one horizontal swim lane per person (label with names)",
+     "Add a sticky note key: yellow = task, green = 'Claude could help here', red = 'needs human judgment'",
+     "Leave a shared 'overlap zone' at the bottom where common tasks across people get consolidated",
+     "Add an exit ticket box in the bottom-right corner: 'My one takeaway from today'"
+   ],
+   layout:`
+     <div class="lc-section">SWIM LANES (one row per person)</div>
+     <div style="display:flex;flex-direction:column;gap:8px;position:relative;z-index:1;">
+       <div style="display:flex;align-items:center;gap:8px;">
+         <span style="font-size:11px;color:var(--dim);width:60px;flex-shrink:0;">[Name 1]</span>
+         <span class="lc-node amber rect">Daily task</span>
+         <span class="lc-node amber rect">Daily task</span>
+         <span class="lc-node green rect">✓ Claude here</span>
+         <span class="lc-node amber rect">Daily task</span>
+       </div>
+       <div style="display:flex;align-items:center;gap:8px;">
+         <span style="font-size:11px;color:var(--dim);width:60px;flex-shrink:0;">[Name 2]</span>
+         <span class="lc-node green rect">✓ Claude here</span>
+         <span class="lc-node amber rect">Daily task</span>
+         <span class="lc-node amber rect">Daily task</span>
+         <span class="lc-node green rect">✓ Claude here</span>
+       </div>
+       <div style="display:flex;align-items:center;gap:8px;">
+         <span style="font-size:11px;color:var(--dim);width:60px;flex-shrink:0;">[Name 3+]</span>
+         <span class="lc-node amber rect">Daily task</span>
+         <span class="lc-node green rect">✓ Claude here</span>
+         <span class="lc-node amber rect">Daily task</span>
+         <span class="lc-node amber rect">Daily task</span>
+       </div>
+     </div>
+     <div class="lc-section">SHARED OVERLAP ZONE</div>
+     <div class="lc-row">
+       <span class="lc-node green pill">Email drafting</span>
+       <span class="lc-node green pill">Report summarizing</span>
+       <span class="lc-node green pill">Research</span>
+     </div>
+     <div class="lc-note"><strong>Exit ticket box:</strong> "My one takeaway from today:" — each person types one line here before leaving</div>
+   `},
+  {n:2,color:"#F59E0B",title:"Prompt Grading Rubric Board",type:"Sticky Note Teardown",
+   desc:"Each person's real work prompt gets posted and graded by the group using a 3-column rubric. Group rewrites the weakest one together in real time.",
+   setup:[
+     "Create one vertical column per person (or group of 2 for 20+ participants)",
+     "Each column has 3 sections stacked top to bottom: the original prompt, what works, what's missing",
+     "Add a shared 'Best Rewrite' zone at the bottom — group picks one prompt to rewrite together",
+     "Use color-coded stickies: blue = original, green = what works, orange = what's missing, purple = suggested rewrite"
+   ],
+   layout:`
+     <div class="lc-section">PROMPT TEARDOWN COLUMNS (one per person)</div>
+     <div class="lc-col-wrap">
+       <div class="lc-col">
+         <div class="lc-col-title">[Person 1]</div>
+         <div class="lc-col-item" style="background:rgba(74,158,255,.1);border-left:2px solid var(--blue);">Original prompt</div>
+         <div class="lc-col-item" style="background:rgba(16,185,129,.1);border-left:2px solid var(--green);">✓ What works</div>
+         <div class="lc-col-item" style="background:rgba(245,158,11,.1);border-left:2px solid var(--amber);">⚠ What's missing</div>
+       </div>
+       <div class="lc-col">
+         <div class="lc-col-title">[Person 2]</div>
+         <div class="lc-col-item" style="background:rgba(74,158,255,.1);border-left:2px solid var(--blue);">Original prompt</div>
+         <div class="lc-col-item" style="background:rgba(16,185,129,.1);border-left:2px solid var(--green);">✓ What works</div>
+         <div class="lc-col-item" style="background:rgba(245,158,11,.1);border-left:2px solid var(--amber);">⚠ What's missing</div>
+       </div>
+       <div class="lc-col">
+         <div class="lc-col-title">[Person 3]</div>
+         <div class="lc-col-item" style="background:rgba(74,158,255,.1);border-left:2px solid var(--blue);">Original prompt</div>
+         <div class="lc-col-item" style="background:rgba(16,185,129,.1);border-left:2px solid var(--green);">✓ What works</div>
+         <div class="lc-col-item" style="background:rgba(245,158,11,.1);border-left:2px solid var(--amber);">⚠ What's missing</div>
+       </div>
+     </div>
+     <div class="lc-section">SHARED BEST REWRITE ZONE</div>
+     <div class="lc-row">
+       <span class="lc-node purple rect" style="max-width:400px;">[Group's collaboratively rewritten prompt goes here]</span>
+     </div>
+     <div class="lc-note"><strong>Rubric checklist (pre-build this as a sticky):</strong> Does it have a role? Does it provide context? Does it specify format? Does it say what NOT to do?</div>
+   `},
+  {n:3,color:"#10B981",title:"Context Failure Diagnosis Tree",type:"Decision Flowchart",
+   desc:"A branching flowchart that the group uses to diagnose real 'Claude surprise' stories. Each story gets routed through the tree to find the root cause.",
+   setup:[
+     "Build a left-to-right flowchart starting with 'Claude gave a bad/unexpected answer'",
+     "First branch: Was full context included? (Yes/No)",
+     "Second branch: Was a role specified? (Yes/No)",
+     "Third branch: Was output format specified? (Yes/No)",
+     "Leaf nodes: 'Context gap', 'Role gap', 'Format gap', 'Model limitation', 'Prompt was fine — edge case'",
+     "Leave sticky note space to the right for the group's real examples to be pinned to their matching leaf"
+   ],
+   layout:`
+     <div class="lc-section">DIAGNOSIS FLOWCHART</div>
+     <div class="lc-row">
+       <span class="lc-node red rect">Claude gave unexpected answer</span>
+       <span class="lc-arr">→</span>
+       <span class="lc-node gray rect" style="font-size:11px;">Full context<br>included?</span>
+     </div>
+     <div style="display:flex;gap:16px;margin:8px 0 8px 120px;position:relative;z-index:1;">
+       <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-start;">
+         <span style="font-size:11px;color:var(--dim);">NO ↓</span>
+         <span class="lc-node red rect">Context Gap</span>
+         <span class="lc-node gray rect" style="font-size:11px;">Role<br>specified?</span>
+         <div style="display:flex;gap:8px;margin-left:8px;">
+           <div style="display:flex;flex-direction:column;gap:4px;align-items:center;"><span style="font-size:10px;color:var(--dim);">NO</span><span class="lc-node red rect">Role Gap</span></div>
+           <div style="display:flex;flex-direction:column;gap:4px;align-items:center;"><span style="font-size:10px;color:var(--dim);">YES</span><span class="lc-node amber rect">Format Gap?</span></div>
+         </div>
+       </div>
+       <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-start;">
+         <span style="font-size:11px;color:var(--dim);">YES ↓</span>
+         <span class="lc-node amber rect">Format<br>specified?</span>
+         <div style="display:flex;gap:8px;margin-left:8px;">
+           <div style="display:flex;flex-direction:column;gap:4px;align-items:center;"><span style="font-size:10px;color:var(--dim);">NO</span><span class="lc-node amber rect">Format Gap</span></div>
+           <div style="display:flex;flex-direction:column;gap:4px;align-items:center;"><span style="font-size:10px;color:var(--dim);">YES</span><span class="lc-node green rect">Edge Case</span></div>
+         </div>
+       </div>
+     </div>
+     <div class="lc-section">REAL EXAMPLES (pin to matching leaf)</div>
+     <div class="lc-row">
+       <span class="lc-node amber rect" style="font-size:11px;">"[Story from check-in]" → Context Gap</span>
+       <span class="lc-node amber rect" style="font-size:11px;">"[Story from check-in]" → Role Gap</span>
+     </div>
+     <div class="lc-note"><strong>Pre-build tip:</strong> Add sticky notes to each leaf with a 1-sentence fix: "To fix a Context Gap: always start your prompt with a full situation summary."</div>
+   `},
+  {n:4,color:"#8B5CF6",title:"Agentic Loop Diagram",type:"Process Flow + Risk Map",
+   desc:"A pre-built agentic loop template that the group fills in with a real workplace workflow. Includes a failure-point layer that the group adds at the end.",
+   setup:[
+     "Build a circular loop with 4 main nodes: Task Input → Plan → Tool Use → Observe Output → (back to Plan or → Stop)",
+     "Leave blank labels on each node for the group to fill in their specific workflow",
+     "Add a 'failure points' layer below — sticky note zone where people add red flags",
+     "Add a 'scenario options' side panel with 3 pre-seeded scenarios for the group to pick from"
+   ],
+   layout:`
+     <div class="lc-section">THE AGENTIC LOOP (group fills in their workflow)</div>
+     <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;position:relative;z-index:1;">
+       <span class="lc-node blue rect">📥 Task Input<br><span style="font-size:10px;color:var(--dim);">[blank for group]</span></span>
+       <span class="lc-arr">→</span>
+       <span class="lc-node purple rect">🧠 Plan<br><span style="font-size:10px;color:var(--dim);">[blank for group]</span></span>
+       <span class="lc-arr">→</span>
+       <span class="lc-node amber rect">🔧 Tool Use<br><span style="font-size:10px;color:var(--dim);">[blank for group]</span></span>
+       <span class="lc-arr">→</span>
+       <span class="lc-node cyan rect">👁 Observe<br><span style="font-size:10px;color:var(--dim);">[blank for group]</span></span>
+       <span class="lc-arr">→</span>
+       <span class="lc-node gray rect" style="font-size:11px;">Loop back<br>or Stop?</span>
+     </div>
+     <div class="lc-section">PRE-SEEDED SCENARIO OPTIONS (group picks one)</div>
+     <div class="lc-row">
+       <span class="lc-node blue pill">Option A: Trade confirmation emails</span>
+       <span class="lc-node blue pill">Option B: Report summarization</span>
+       <span class="lc-node blue pill">Option C: Client onboarding checklist</span>
+     </div>
+     <div class="lc-section">FAILURE POINTS ZONE (group adds these at minute 40)</div>
+     <div class="lc-row">
+       <span class="lc-node red rect" style="font-size:11px;">⚡ [Failure point 1]</span>
+       <span class="lc-node red rect" style="font-size:11px;">⚡ [Failure point 2]</span>
+       <span class="lc-node red rect" style="font-size:11px;">⚡ [Failure point 3]</span>
+     </div>
+     <div class="lc-note"><strong>Pre-build tip:</strong> Pre-fill the loop with "Option A: Trade confirmation emails" as the default so the group can start editing immediately rather than starting from scratch.</div>
+   `},
+  {n:5,color:"#EF4444",title:"MCP Architecture Map",type:"System Architecture Diagram",
+   desc:"A three-layer MCP architecture diagram showing Host → Client → Server, with a blank 'your team's tool' section the group builds out together.",
+   setup:[
+     "Top layer: Host (Claude) — one large rounded rectangle",
+     "Middle layer: MCP Client — connector box",
+     "Bottom layer: MCP Server — the group's hypothetical tool",
+     "Tool card template: Name, Description, What it does, What data it reads",
+     "Rating stickies zone: group rates each tool description 1–5 stars"
+   ],
+   layout:`
+     <div class="lc-section">MCP ARCHITECTURE</div>
+     <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-start;position:relative;z-index:1;">
+       <span class="lc-node purple rect" style="width:280px;text-align:center;">🤖 HOST: Claude<br><span style="font-size:10px;color:var(--dim);">Receives task, decides which tools to call</span></span>
+       <span class="lc-arr" style="transform:rotate(90deg);margin-left:130px;">→</span>
+       <span class="lc-node blue rect" style="width:280px;text-align:center;">🔌 MCP CLIENT<br><span style="font-size:10px;color:var(--dim);">Routes requests between Claude and servers</span></span>
+       <span class="lc-arr" style="transform:rotate(90deg);margin-left:130px;">→</span>
+       <span class="lc-node green rect" style="width:280px;text-align:center;">🛠 MCP SERVER: Your Team's Tool<br><span style="font-size:10px;color:var(--dim);">[group fills in below]</span></span>
+     </div>
+     <div class="lc-section">TOOL DESIGN CARDS (one per person/pair)</div>
+     <div class="lc-col-wrap">
+       <div class="lc-col">
+         <div class="lc-col-title">Tool Name</div>
+         <div class="lc-col-item">[blank]</div>
+         <div class="lc-col-title" style="margin-top:8px;">Description</div>
+         <div class="lc-col-item">[blank — this is what Claude reads to decide when to use the tool]</div>
+         <div class="lc-col-title" style="margin-top:8px;">Group Rating</div>
+         <div class="lc-col-item">⭐⭐⭐⭐⭐</div>
+       </div>
+       <div class="lc-col">
+         <div class="lc-col-title">Tool Name</div>
+         <div class="lc-col-item">[blank]</div>
+         <div class="lc-col-title" style="margin-top:8px;">Description</div>
+         <div class="lc-col-item">[blank]</div>
+         <div class="lc-col-title" style="margin-top:8px;">Group Rating</div>
+         <div class="lc-col-item">⭐⭐⭐⭐⭐</div>
+       </div>
+       <div class="lc-col">
+         <div class="lc-col-title">Tool Name</div>
+         <div class="lc-col-item">[blank]</div>
+         <div class="lc-col-title" style="margin-top:8px;">Description</div>
+         <div class="lc-col-item">[blank]</div>
+         <div class="lc-col-title" style="margin-top:8px;">Group Rating</div>
+         <div class="lc-col-item">⭐⭐⭐⭐⭐</div>
+       </div>
+     </div>
+     <div class="lc-note"><strong>Pre-build tip:</strong> Add one pre-filled "bad" tool description and one "good" one to the canvas before the session — contrast teaching makes the concept click faster.</div>
+   `},
+  {n:6,color:"#06B6D4",title:"Split-Room Requirements vs. Architecture",type:"Two-Column Overlay",
+   desc:"The room splits — technical side builds a Claude Code workflow diagram, non-technical side writes a requirements doc. Both go on the same canvas and get overlaid at minute 35.",
+   setup:[
+     "Divide canvas vertically: left half = 'Non-Technical: Requirements Doc', right half = 'Technical: Architecture Diagram'",
+     "Left side: structured text template with Goal, Inputs, Expected Outputs, Constraints, Success Criteria",
+     "Right side: flowchart shapes pre-loaded: CLAUDE.md config → Plan Mode → Execution → Output → CI/CD",
+     "Center: 'Match Zone' — arrows drawn from requirements to architecture to show alignment (or gaps)"
+   ],
+   layout:`
+     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;position:relative;z-index:1;">
+       <div class="lc-col">
+         <div class="lc-col-title" style="color:var(--amber);">NON-TECHNICAL SIDE: Requirements</div>
+         <div class="lc-col-item"><strong>Goal:</strong> [blank]</div>
+         <div class="lc-col-item"><strong>Inputs:</strong> [blank]</div>
+         <div class="lc-col-item"><strong>Expected output:</strong> [blank]</div>
+         <div class="lc-col-item"><strong>Constraints:</strong> [blank]</div>
+         <div class="lc-col-item"><strong>Success looks like:</strong> [blank]</div>
+       </div>
+       <div class="lc-col">
+         <div class="lc-col-title" style="color:var(--cyan);">TECHNICAL SIDE: Architecture</div>
+         <div style="display:flex;flex-direction:column;gap:6px;">
+           <span class="lc-node cyan rect" style="font-size:11px;">CLAUDE.md Config</span>
+           <span class="lc-arr" style="transform:rotate(90deg);margin-left:40px;">→</span>
+           <span class="lc-node blue rect" style="font-size:11px;">Plan Mode Review</span>
+           <span class="lc-arr" style="transform:rotate(90deg);margin-left:40px;">→</span>
+           <span class="lc-node purple rect" style="font-size:11px;">Execute Task</span>
+           <span class="lc-arr" style="transform:rotate(90deg);margin-left:40px;">→</span>
+           <span class="lc-node green rect" style="font-size:11px;">Output / CI-CD</span>
+         </div>
+       </div>
+     </div>
+     <div class="lc-section" style="margin-top:16px;">MATCH ZONE (minute 35) — draw arrows from requirements to architecture steps</div>
+     <div class="lc-note"><strong>Gap stickies:</strong> When a requirement has no matching architecture step (or vice versa), place a red sticky note labeled "GAP" in the center. These gaps drive the wrap discussion.</div>
+   `},
+  {n:7,color:"#F59E0B",title:"Multi-Agent Orchestration Diagram",type:"Hierarchical Flow",
+   desc:"An orchestrator-at-top, workers-below diagram. The group maps a real workplace workflow into this structure, labeling the input/output format on each connection.",
+   setup:[
+     "Top: one large 'Orchestrator Agent' node",
+     "Middle: 3–5 'Worker Agent' nodes branching below, each with a blank name label",
+     "Connections: labeled arrows showing what format flows between nodes (JSON, plain text, structured table, etc.)",
+     "Bottom: 'Final Output' node",
+     "Side panel: the group's pre-work workflow written out in plain English for reference"
+   ],
+   layout:`
+     <div style="display:flex;flex-direction:column;align-items:center;gap:6px;position:relative;z-index:1;">
+       <span class="lc-node purple rect" style="width:220px;text-align:center;">🎯 ORCHESTRATOR AGENT<br><span style="font-size:10px;color:var(--dim);">[your workflow name]</span></span>
+       <div style="display:flex;gap:8px;align-items:flex-start;flex-wrap:wrap;justify-content:center;">
+         <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
+           <span style="font-size:10px;color:var(--dim);">→ JSON</span>
+           <span class="lc-node blue rect" style="font-size:11px;">Worker 1<br>[blank]</span>
+           <span style="font-size:10px;color:var(--dim);">→ Table</span>
+         </div>
+         <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
+           <span style="font-size:10px;color:var(--dim);">→ Text</span>
+           <span class="lc-node blue rect" style="font-size:11px;">Worker 2<br>[blank]</span>
+           <span style="font-size:10px;color:var(--dim);">→ JSON</span>
+         </div>
+         <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
+           <span style="font-size:10px;color:var(--dim);">→ Query</span>
+           <span class="lc-node blue rect" style="font-size:11px;">Worker 3<br>[blank]</span>
+           <span style="font-size:10px;color:var(--dim);">→ Report</span>
+         </div>
+       </div>
+       <span class="lc-node green rect" style="width:180px;text-align:center;">📄 FINAL OUTPUT<br><span style="font-size:10px;color:var(--dim);">[format: blank]</span></span>
+     </div>
+     <div class="lc-note"><strong>Pre-seeded example:</strong> Pre-fill one completed diagram using "Monthly Risk Report" as the workflow: Orchestrator → Data Pull Worker (JSON) + Analysis Worker (structured text) + Formatting Worker (HTML) → Final PDF report.</div>
+   `},
+  {n:8,color:"#EC4899",title:"Five-Domain Confidence Radar",type:"Self-Assessment Chart",
+   desc:"A radar chart (or simplified bar chart in Lucidchart) where each group member rates their confidence 1–5 on each exam domain. Creates a visual map of collective readiness.",
+   setup:[
+     "Option A (easier): Create 5 vertical columns, one per domain. Each person places a dot/sticky at their confidence level 1–5",
+     "Option B (visual): Draw a pentagon radar chart with domains at each point, each person draws their own polygon in a different color",
+     "Add a 'Group Average' bar at the bottom to show where collective focus should go for Sessions 9–10",
+     "Add a sticky zone: 'Questions I still can't answer' — people post their toughest open questions"
+   ],
+   layout:`
+     <div class="lc-section">CONFIDENCE RATING COLUMNS (each person places a sticky at their level)</div>
+     <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;position:relative;z-index:1;">
+       ${["Agentic Arch","Claude Code","Prompt Eng","Tool & MCP","Context"].map((d,i)=>{
+         const colors=["var(--purple)","var(--cyan)","var(--amber)","var(--red)","var(--green)"];
+         return `<div class="lc-col"><div class="lc-col-title" style="color:${colors[i]};font-size:10px;">${d}</div>${[5,4,3,2,1].map(n=>`<div class="lc-col-item" style="text-align:center;font-size:11px;">${n} ●</div>`).join('')}</div>`;
+       }).join('')}
+     </div>
+     <div class="lc-section" style="margin-top:16px;">OPEN QUESTIONS ZONE</div>
+     <div class="lc-row">
+       <span class="lc-node amber rect" style="font-size:11px;">"[Unanswered question]"</span>
+       <span class="lc-node amber rect" style="font-size:11px;">"[Unanswered question]"</span>
+       <span class="lc-node amber rect" style="font-size:11px;">"[Unanswered question]"</span>
+     </div>
+     <div class="lc-note"><strong>How to use it:</strong> After everyone rates themselves, look for the lowest-rated domain across the group — that domain gets extra focus in Sessions 9 and 10.</div>
+   `},
+  {n:9,color:"#EC4899",title:"Mock Exam Question Voting Board",type:"Card Sort + Vote",
+   desc:"Each person's submitted question becomes a card. The group dot-votes on which to discuss. The top-voted questions become the mock exam.",
+   setup:[
+     "Create one card per submitted question — use a template: Question text, Domain tag, Difficulty (easy/medium/hard)",
+     "Add a voting area: each person gets 3 dot votes to place on any cards",
+     "After voting, reorder cards by vote count — top 6–8 become the session's exam questions",
+     "Add a 'Best Answer' sticky to the right of each card for the group to fill in during the session"
+   ],
+   layout:`
+     <div class="lc-section">QUESTION CARDS (one per submitted question)</div>
+     <div class="lc-col-wrap">
+       <div class="lc-col">
+         <div class="lc-col-title">Q01 — [Person's name]</div>
+         <div class="lc-col-item">Domain: <span style="color:var(--purple);">Agentic Arch</span></div>
+         <div class="lc-col-item" style="font-style:italic;">"[Question text]"</div>
+         <div class="lc-col-item">Difficulty: Medium</div>
+         <div class="lc-col-item" style="color:var(--amber);">Votes: ●●●</div>
+       </div>
+       <div class="lc-col">
+         <div class="lc-col-title">Q02 — [Person's name]</div>
+         <div class="lc-col-item">Domain: <span style="color:var(--red);">Tool & MCP</span></div>
+         <div class="lc-col-item" style="font-style:italic;">"[Question text]"</div>
+         <div class="lc-col-item">Difficulty: Hard</div>
+         <div class="lc-col-item" style="color:var(--amber);">Votes: ●●</div>
+       </div>
+       <div class="lc-col">
+         <div class="lc-col-title">Q03 — [Person's name]</div>
+         <div class="lc-col-item">Domain: <span style="color:var(--cyan);">Claude Code</span></div>
+         <div class="lc-col-item" style="font-style:italic;">"[Question text]"</div>
+         <div class="lc-col-item">Difficulty: Easy</div>
+         <div class="lc-col-item" style="color:var(--amber);">Votes: ●</div>
+       </div>
+     </div>
+     <div class="lc-section">BEST ANSWER ZONE (filled in during discussion)</div>
+     <div class="lc-row">
+       <span class="lc-node green rect" style="font-size:11px;">Q01 Best Answer: [group writes it here]</span>
+     </div>
+     <div class="lc-note"><strong>Facilitator note:</strong> Pre-load the question card template before the session so people can copy and fill it in quickly at the start. Don't build cards live — it wastes the first 10 minutes.</div>
+   `},
+  {n:10,color:"#10B981",title:"Collective Knowledge Map",type:"Five-Domain Mind Map",
+   desc:"A collaborative mind map with one branch per exam domain. Every person adds at least one contribution per domain. Becomes the group's permanent knowledge artifact.",
+   setup:[
+     "Center node: 'What We Learned — Claude Certified Architect Study Group'",
+     "5 main branches radiating out, one per domain, each in its domain color",
+     "Each branch has blank sub-nodes for contributions",
+     "Add a 'What's Next' branch for post-group actions",
+     "Add an 'Exit Tribute' zone where people can write a one-line message to the next cohort"
+   ],
+   layout:`
+     <div style="display:flex;flex-direction:column;align-items:center;gap:12px;position:relative;z-index:1;">
+       <span class="lc-node blue rect" style="width:220px;text-align:center;font-size:14px;">🎓 What We Learned</span>
+       <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;">
+         <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
+           <span class="lc-node purple rect" style="font-size:11px;">Agentic Arch</span>
+           <span class="lc-node gray rect" style="font-size:10px;">[contribution]</span>
+           <span class="lc-node gray rect" style="font-size:10px;">[contribution]</span>
+         </div>
+         <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
+           <span class="lc-node cyan rect" style="font-size:11px;">Claude Code</span>
+           <span class="lc-node gray rect" style="font-size:10px;">[contribution]</span>
+           <span class="lc-node gray rect" style="font-size:10px;">[contribution]</span>
+         </div>
+         <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
+           <span class="lc-node amber rect" style="font-size:11px;">Prompt Eng</span>
+           <span class="lc-node gray rect" style="font-size:10px;">[contribution]</span>
+           <span class="lc-node gray rect" style="font-size:10px;">[contribution]</span>
+         </div>
+         <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
+           <span class="lc-node red rect" style="font-size:11px;">Tool & MCP</span>
+           <span class="lc-node gray rect" style="font-size:10px;">[contribution]</span>
+           <span class="lc-node gray rect" style="font-size:10px;">[contribution]</span>
+         </div>
+         <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
+           <span class="lc-node green rect" style="font-size:11px;">Context</span>
+           <span class="lc-node gray rect" style="font-size:10px;">[contribution]</span>
+           <span class="lc-node gray rect" style="font-size:10px;">[contribution]</span>
+         </div>
+       </div>
+       <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:4px;">
+         <span class="lc-node green pill" style="font-size:11px;">🚀 What's Next</span>
+         <span class="lc-node gray pill" style="font-size:11px;">💬 Message to Next Cohort</span>
+       </div>
+     </div>
+     <div class="lc-note"><strong>Pre-build tip:</strong> Add your own contributions to each domain before the session — it models the behavior and gets people started faster. Share the edit link so people can add asynchronously in the day before if they want.</div>
+   `}
+];
+
+// Build curriculum
+function buildSessions(){
+  const c=document.getElementById('sessions-container');
+  sessions.forEach((s,i)=>{
+    const pName=["Foundation","Application","Synthesis"][s.phase-1];
+    const num=String(s.n).padStart(2,'0');
+    c.innerHTML+=`
+    <div class="session-card" id="sc${i}">
+      <button class="s-hdr" onclick="tog(${i})">
+        <div class="s-num" style="background:${s.color}20;border:2px solid ${s.color};color:${s.color};">${num}</div>
+        <div style="flex:1;">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px;">
+            <span class="s-title">${s.title}</span>
+            ${s.coFac?'<span class="cofac">CO-FACILITATOR IDEAL</span>':''}
+          </div>
+          <div class="s-meta">
+            <span style="font-size:12px;color:var(--dim);font-family:var(--mono);">Phase ${s.phase}: ${pName}</span>
+            ${s.examWeight?`<span style="font-size:12px;font-family:var(--mono);color:${s.color};">Exam: ${s.examWeight}</span>`:''}
+          </div>
+        </div>
+        <span class="chev" id="chev${i}">↓</span>
+      </button>
+      <div class="s-body" id="sb${i}">
+        <div class="pw-box">
+          <div class="box-lbl" style="color:var(--blue);">📚 Pre-Work (30 mins max)</div>
+          <div class="pw-row"><strong>Source:</strong> ${s.prework.source}</div>
+          ${s.prework.url
+            ?`<div class="pw-link"><strong>Primary:</strong> <a href="${s.prework.url}" target="_blank">${s.prework.course} ↗</a></div>`
+            :`<div class="pw-row"><strong>Course:</strong> ${s.prework.course}</div>`}
+          ${s.prework.also&&s.prework.alsoUrl
+            ?`<div class="pw-link"><strong>Also helpful:</strong> <a href="${s.prework.alsoUrl}" target="_blank">${s.prework.also} ↗</a></div>`:''}
+          ${s.prework.udemy&&s.prework.udemyUrl
+            ?`<div class="pw-link" style="margin-top:6px;padding-top:6px;border-top:1px solid var(--border);"><strong style="color:var(--amber);">🎓 Dive deeper (Udemy):</strong> <a href="${s.prework.udemyUrl}" target="_blank" style="color:var(--amber);">${s.prework.udemy} ↗</a></div>`:''}
+          <div class="pw-row"><strong>Time:</strong> ${s.prework.duration}</div>
+          <div class="pw-quote">Post to Confluence: "${s.prework.task}"</div>
+        </div>
+        <div style="margin-bottom:16px;">
+          <div class="box-lbl" style="color:var(--blue);">🕐 Session Plan (45 mins)</div>
+          ${s.steps.map(st=>`
+          <div class="step-row" style="background:${SC[st.type]}0D;border-left:3px solid ${SC[st.type]};">
+            <div class="step-time" style="color:${SC[st.type]};">${st.t}m</div>
+            <div><div class="step-title">${st.label}</div><div class="step-desc">${st.desc}</div></div>
+          </div>`).join('')}
+        </div>
+        <div class="grid2" style="margin-bottom:16px;">
+          <div class="lc-box">
+            <div class="lc-lbl" style="color:var(--purple);">Lucidchart Board</div>
+            <div style="font-size:13px;color:var(--muted);margin-bottom:8px;">${s.lucidLabel}</div>
+            <a href="${s.lucidEdit}" target="_blank" style="display:inline-block;padding:7px 14px;background:rgba(139,92,246,.15);border:1px solid rgba(139,92,246,.4);border-radius:4px;font-size:12px;color:var(--purple);text-decoration:none;font-family:var(--mono);">Open in Lucid — Edit ↗</a>
+          </div>
+          <div class="lc-box"><div class="lc-lbl" style="color:var(--cyan);">Confluence Post</div><div style="font-size:13px;color:var(--muted);">${s.conf}</div></div>
+        </div>
+        <div class="tip-box"><div class="tip-lbl">💡 Facilitator Tip</div><div class="tip-text">${s.tip}</div></div>
+      </div>
+    </div>`;
+  });
+}
+
+// Build blueprints
+function buildBlueprints(){
+  const c=document.getElementById('blueprints-container');
+  blueprints.forEach((b,i)=>{
+    c.innerHTML+=`
+    <div class="lc-blueprint" id="bp${i}" style="border-color:${b.color}30;">
+      <div class="lc-blueprint-title">
+        <div style="width:28px;height:28px;border-radius:50%;background:${b.color}20;border:2px solid ${b.color};display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;font-family:var(--mono);color:${b.color};">${b.n}</div>
+        <div style="flex:1;">
+          <div style="font-size:14px;color:var(--text);font-family:var(--serif);font-weight:400;">${b.title}</div>
+          <div style="font-size:11px;color:${b.color};margin-top:2px;">${b.type}</div>
+        </div>
+        <a href="${sessions[i].lucidEdit}" target="_blank" style="display:inline-block;padding:7px 16px;background:rgba(139,92,246,.15);border:1px solid rgba(139,92,246,.4);border-radius:4px;font-size:12px;color:var(--purple);text-decoration:none;font-family:var(--mono);white-space:nowrap;flex-shrink:0;">Open in Lucid ↗</a>
+      </div>
+      <p style="font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:14px;">${b.desc}</p>
+      <div style="margin-bottom:14px;">
+        <div style="font-size:11px;color:var(--dim);text-transform:uppercase;letter-spacing:.08em;font-family:var(--mono);margin-bottom:8px;">How to Build It in Lucidchart</div>
+        <div class="lc-steps">${b.setup.map(s=>`<div class="lc-step"><div style="font-size:13px;color:var(--muted);line-height:1.5;">${s}</div></div>`).join('')}</div>
+      </div>
+      <div style="font-size:11px;color:var(--dim);text-transform:uppercase;letter-spacing:.08em;font-family:var(--mono);margin-bottom:8px;">Visual Layout Preview</div>
+      <div class="lc-canvas">${b.layout}</div>
+    </div>`;
+  });
+}
+
+function tog(i){
+  const b=document.getElementById('sb'+i);
+  const card=document.getElementById('sc'+i);
+  const chev=document.getElementById('chev'+i);
+  const open=b.classList.contains('open');
+  b.classList.toggle('open');
+  chev.classList.toggle('open');
+  card.style.borderColor=open?'var(--border)':sessions[i].color+'60';
+}
+
+function switchTab(id,btn){
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  btn.classList.add('active');
+}
+
+buildSessions();
+buildBlueprints();
+</script>
+</body>
+</html>
